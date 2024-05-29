@@ -22,6 +22,20 @@ jobs:
         run: |
           git config --global user.email "Origin.Business.Soft@gmail.com"
           git config --global user.name "OriginSoftwareDevelopment"
-          git remote add azure https://$AZURE_DEVOPS_PAT@dev.azure.com/OriginSoftwareDevelopment/LT-Lashes/_git/LT-Lashes-Client-Prod.git
+          git remote add azure {AZURE REPO NAME HERE}
           git push --force azure HEAD:main
 #HOSTINGER
+
+      # Install lftp
+      #- name: Install lftp
+      #  run: sudo apt-get install lftp -y
+
+      # FTP deployment to Hostinger
+      #- name: Deploy to Hostinger via FTP
+      #  env:
+      #    FTP_HOST: "ftp.energysaversheatpump.com"
+      #    FTP_USERNAME: "u418107328.ProdDeploymentAdmin"
+      #    FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+      #    FTP_DIRECTORY: "/"
+      #  run: |
+      #    lftp -e "set ssl:verify-certificate no; mirror --reverse --delete --only-newer --verbose . $FTP_DIRECTORY; bye" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST
