@@ -1,0 +1,53 @@
+name: Import Process
+
+on:
+  workflow_dispatch:
+    # Allow manual triggering of the workflow
+    # You can add other triggers if needed, e.g., push events
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    # Determine DEV repository name based on PROD repository name
+    - name: Determine DEV Repository Name
+      id: dev_repo_name
+      run: echo "DEV_REPO_NAME=$(echo ${{ github.repository }} | sed 's/-Prod$//')-Dev" >> $GITHUB_ENV
+
+    # Clone the source repository with authentication
+    - name: Clone Source Repository
+      run: |
+        git clone https://${{ secrets.GITPAT }}@github.com/${{ env.DEV_REPO_NAME }}.git source_repo
+
+    # Configure Git with user identity
+    - name: Configure Git
+      run: |
+        git config --global user.email "origin.business.soft@gmail.com"
+        git config --global user.name "origin-software-dev"
+
+    # Add steps to perform the import process here
+    - name: List Cloned Repository Contents
+      run: ls source_repo
+
+    # Example: Copy files from the cloned repository to the target repository
+    - name: Copy Files from Source to Target
+      run: cp -r source_repo/* .
+
+    # Remove the source_repo directory if it's not needed
+    - name: Clean Up
+      run: rm -rf source_repo
+
+   # Example: Commit and push changes to the target repository
+    - name: Commit and Push Changes
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          git add .
+          git commit -m "Import changes from source repository"
+          git push origin main
+        else
+          echo "Repository is up to date. No changes to commit."
+        fi

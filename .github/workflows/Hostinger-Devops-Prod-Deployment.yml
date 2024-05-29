@@ -1,0 +1,27 @@
+name: Hostinger-Devops-Prod-Deployment
+
+on:
+  workflow_dispatch:
+    # This event allows manual triggering of the workflow
+    # You can configure additional parameters like 'inputs' if needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Push to Azure DevOps
+      - name: Push to Azure
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          git config --global user.email "Origin.Business.Soft@gmail.com"
+          git config --global user.name "OriginSoftwareDevelopment"
+          git remote add azure https://$AZURE_DEVOPS_PAT@dev.azure.com/OriginSoftwareDevelopment/LT-Lashes/_git/LT-Lashes-Client-Prod.git
+          git push --force azure HEAD:main
+#HOSTINGER
